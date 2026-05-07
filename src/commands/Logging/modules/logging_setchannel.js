@@ -22,56 +22,69 @@ export default {
         const guildId = interaction.guildId;
         const currentConfig = await getGuildConfig(client, guildId);
 
-        const logChannel = interaction.options.getChannel('channel');
-        const disableLogging = interaction.options.getBoolean('disable');
+        const type = interaction.options.getString('type');
+const logChannel = interaction.options.getChannel('channel');
+const disableLogging = interaction.options.getBoolean('disable');
 
-        try {
-            if (disableLogging) {
-                currentConfig.logChannelId = null;
-                currentConfig.enableLogging = false;
-                currentConfig.logging = {
-                    ...(currentConfig.logging || {}),
-                    enabled: false,
-                    channelId: null,
-                };
-                await setGuildConfig(client, guildId, currentConfig);
-                return InteractionHelper.safeEditReply(interaction, {
-                    embeds: [successEmbed('Logging Disabled 🚫', 'Audit logging has been disabled for this server.')],
-                });
-            }
+try {
+    currentConfig.logging ??= {
+        enabled: false,
+        channelId: null,
+        channels: {},
+        enabledEvents: {},
+    };
+    currentConfig.logging.channels ??= {};
 
-            if (logChannel) {
-                const perms = logChannel.permissionsFor(interaction.guild.members.me);
-                if (!perms.has(PermissionsBitField.Flags.SendMessages) || !perms.has(PermissionsBitField.Flags.EmbedLinks)) {
-                    return InteractionHelper.safeEditReply(interaction, {
-                        embeds: [errorEmbed('Bot Permission Error', `I need **Send Messages** and **Embed Links** permissions in ${logChannel}.`)],
-                    });
-                }
+    if (disableLogging) {
+        currentConfig.logging.channels[type] = null;
 
-                currentConfig.logChannelId = logChannel.id;
-                currentConfig.enableLogging = true;
-                currentConfig.logging = {
-                    ...(currentConfig.logging || {}),
-                    enabled: true,
-                    channelId: logChannel.id,
-                };
-                await setGuildConfig(client, guildId, currentConfig);
+        const stillHasAnyChannel = Object.values(currentConfig.logging.channels).some(Boolean);
+        currentConfig.logging.enabled = stillHasAnyChannel;
+        currentConfig.enableLogging = stillHasAnyChannel;
 
-                await InteractionHelper.safeEditReply(interaction, {
-                    embeds: [successEmbed('Log Channel Set 📝', `Audit logs will be sent to ${logChannel}.`)],
-                });
+        await setGuildConfig(client, guildId, currentConfig);
 
-                await logEvent({
-                    client,
-                    guild: interaction.guild,
-                    event: {
-                        action: 'Log Channel Activated',
-                        target: logChannel.toString(),
-                        executor: `${interaction.user.tag} (${interaction.user.id})`,
-                        reason: `Logging channel set by ${interaction.user}`,
-                        metadata: { channelId: logChannel.id, moderatorId: interaction.user.id, loggingEnabled: true },
-                    },
-                });
+        return InteractionHelper.safeEditReply(interaction, {
+            embeds: [successEmbed('Logging Updated 🚫', `Disabled **${type}** logging.`)],
+        });
+    }
+
+    if (logChannel) {
+        const perms = logChannel.permissionsFor(interaction.guild.members.me);
+        if (!perms.has(PermissionsBitField.Flags.SendMessages) || !perms.has(PermissionsBitField.Flags.EmbedLinks)) {
+            return InteractionHelper.safeEditReply(interaction, {
+                embeds: [errorEmbed('Bot Permission Error', `I need **Send Messages** and **Embed Links** permissions in ${logChannel}.`)],
+            });
+        }
+
+        currentConfig.logging.channels[type] = logChannel.id;
+
+        if (type === 'common' && !currentConfig.logging.channelId) {
+            currentConfig.logging.channelId = logChannel.id;
+            currentConfig.logChannelId = logChannel.id;
+        }
+
+        currentConfig.logging.enabled = true;
+        currentConfig.enableLogging = true;
+
+        await setGuildConfig(client, guildId, currentConfig);
+
+        await InteractionHelper.safeEditReply(interaction, {
+            embeds: [successEmbed('Log Channel Set 📝', `**${type}** logs will be sent to ${logChannel}.`)],
+        });
+
+        return;
+    }
+
+    return InteractionHelper.safeEditReply(interaction, {
+        embeds: [errorEmbed('No Option Provided', 'Provide either `channel` or `disable: true`.')],
+    });
+} catch (error) {
+    logger.error('logging setchannel error:', error);
+    await InteractionHelper.safeEditReply(interaction, {
+        embeds: [errorEmbed('Configuration Error', 'Could not save the configuration.')],
+    });
+}
                 return;
             }
 
