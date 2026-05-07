@@ -13,11 +13,24 @@ const GUILD_CONFIG_DEFAULTS = {
     autoRole: null,
     dmOnClose: true,
     logIgnore: { users: [], channels: [] },
-    logging: {
-        enabled: false,
-        channelId: null,
-        enabledEvents: {}
-    }
+   logging: {
+    enabled: false,
+    channelId: null,
+    channels: {
+        security: null,
+        moderation: null,
+        ticket: null,
+        member: null,
+        message: null,
+        role: null,
+        giveaway: null,
+        leveling: null,
+        reactionrole: null,
+        counter: null,
+        common: null,
+    },
+    enabledEvents: {}
+}
 };
 
 
