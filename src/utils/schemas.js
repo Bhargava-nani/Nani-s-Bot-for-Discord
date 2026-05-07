@@ -12,9 +12,29 @@ export const LoggingConfigSchema = z
   .object({
     enabled: z.boolean().default(false),
     channelId: z.string().nullable().optional(),
-    enabledEvents: z.record(z.boolean()).default({})
+    channels: z
+      .object({
+        security: z.string().nullable().optional(),
+        moderation: z.string().nullable().optional(),
+        ticket: z.string().nullable().optional(),
+        member: z.string().nullable().optional(),
+        message: z.string().nullable().optional(),
+        role: z.string().nullable().optional(),
+        giveaway: z.string().nullable().optional(),
+        leveling: z.string().nullable().optional(),
+        reactionrole: z.string().nullable().optional(),
+        counter: z.string().nullable().optional(),
+        common: z.string().nullable().optional(),
+      })
+      .default({}),
+    enabledEvents: z.record(z.boolean()).default({}),
   })
-  .default({ enabled: false, enabledEvents: {} });
+  .default({
+    enabled: false,
+    channelId: null,
+    channels: {},
+    enabledEvents: {},
+  });
 
 const TicketLoggingSchema = z
   .object({
