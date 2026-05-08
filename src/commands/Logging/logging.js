@@ -13,11 +13,11 @@ export default {
         .setDescription('Manage audit logging for this server.')
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .setDMPermission(false)
-        .addSubcommand((subcommand) =>
-            subcommand
-                .setName('dashboard')
-                .setDescription('Open the interactive logging dashboard — view status and toggle event categories.'),
-        )
+.addSubcommand((subcommand) =>
+    subcommand
+        .setName('dashboard')
+        .setDescription('Open the interactive logging dashboard — view status and toggle event categories.')
+)
 .addSubcommand((subcommand) =>
     subcommand
         .setName('setchannel')
