@@ -24,6 +24,7 @@ export const LoggingConfigSchema = z
         leveling: z.string().nullable().optional(),
         reactionrole: z.string().nullable().optional(),
         counter: z.string().nullable().optional(),
+        invite: z.string().nullable().optional(),
         common: z.string().nullable().optional(),
       })
       .default({}),
@@ -64,6 +65,15 @@ const VerificationConfigSchema = z
   })
   .optional();
 
+const QuizConfigSchema = z.object({
+  enabled: z.boolean().default(false),
+  channelId: z.string().nullable().optional(),
+  leaderboardChannelId: z.string().nullable().optional(),
+  nextRunAt: z.number().nullable().optional(),
+  questionCount: z.number().int().min(1).max(10).default(5),
+  answerWindowMs: z.number().int().min(15000).default(60000),
+});
+
 export const GuildConfigSchema = z
   .object({
     prefix: z.string().optional(),
@@ -82,6 +92,7 @@ export const GuildConfigSchema = z
     logging: LoggingConfigSchema.optional(),
     ticketLogging: TicketLoggingSchema.optional(),
     enableLogging: z.boolean().optional(),
+    quiz: QuizConfigSchema.optional(),
     verification: VerificationConfigSchema
   })
   .passthrough();
