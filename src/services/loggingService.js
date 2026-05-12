@@ -40,6 +40,7 @@ const EVENT_TYPES = {
   
   MEMBER_JOIN: 'member.join',
   MEMBER_LEAVE: 'member.leave',
+  INVITE_JOIN: 'invite.join',
   MEMBER_NAME_CHANGE: 'member.namechange',
   
   
@@ -81,6 +82,7 @@ const EVENT_COLORS = {
   'role.update': 0x3498db,
   'member.join': 0x2ecc71,
   'member.leave': 0xe74c3c,
+  'invite.join': 0x57F287,
   'member.namechange': 0x3498db,
   'reactionrole.add': 0x2ecc71,
   'reactionrole.remove': 0xe74c3c,
@@ -116,6 +118,7 @@ const EVENT_ICONS = {
   'role.update': '🔄',
   'member.join': '👋',
   'member.leave': '👋',
+  'invite.join': '📨',
   'member.namechange': '🏷️',
   'reactionrole.add': '✅',
   'reactionrole.remove': '❌',
@@ -263,6 +266,7 @@ function getLogChannelForEvent(config, eventType) {
     moderation: channels.moderation,
     ticket: channels.ticket,
     member: channels.member,
+    invite: channels.invite,
     message: channels.message,
     role: channels.role,
     giveaway: channels.giveaway,
