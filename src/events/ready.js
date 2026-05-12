@@ -2,6 +2,7 @@ import { Events } from "discord.js";
 import { logger, startupLog } from "../utils/logger.js";
 import config from "../config/application.js";
 import { reconcileReactionRoleMessages } from "../services/reactionRoleService.js";
+import { primeGuildInvites } from '../utils/inviteTracker.js';
 
 export default {
   name: Events.ClientReady,
@@ -19,6 +20,11 @@ export default {
       startupLog(
         `Reaction role reconciliation: scanned ${reconciliationSummary.scannedMessages}, removed ${reconciliationSummary.removedMessages}, errors ${reconciliationSummary.errors}`
       );
+      await Promise.all(
+  [...client.guilds.cache.values()].map((guild) =>
+    primeGuildInvites(guild).catch(() => {})
+  )
+);
     } catch (error) {
       logger.error("Error in ready event:", error);
     }
