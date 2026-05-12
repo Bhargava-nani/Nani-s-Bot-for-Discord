@@ -40,7 +40,7 @@ quiz: {
   questionCount: 5,
   answerWindowMs: 60000,
 },
-
+};
 
 
 
