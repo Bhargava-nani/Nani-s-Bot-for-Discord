@@ -1,17 +1,15 @@
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  EmbedBuilder,
-} from 'discord.js';
-import {
-  getCategories,
-  getCategoryRemainingCount,
-  getLowStockCategories,
-  pickQuestionFromCategory,
-} from '../data/quizQuestions.js';
-import { getGuildConfig, setGuildConfig } from './guildConfig.js';
-import { logger } from '../utils/logger.js';
+function pickWeeklyQuestionSet(config, state) {
+  const usedByCategory =
+    config.quiz?.usedQuestionIdsByCategory ?? state.usedQuestionIdsByCategory ?? {};
+
+  const picked = pickWeeklyMixedQuiz({ usedByCategory });
+
+  for (const question of picked) {
+    markQuestionUsed(config, state, question.category, question.id);
+  }
+
+  return picked;
+}
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 const LOW_STOCK_THRESHOLD = 10;
