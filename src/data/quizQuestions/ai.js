@@ -3,7 +3,6 @@ export const aiQuestions = aiQuestions.map((q) => ({
   options: q.options.map((opt) => opt.replace(/^[A-D]\)\s*/, '')),
 }));
 
-```javascript
 export const aiQuestions = [
   { id: 'ai-001', question: 'What does "AI" stand for in technology? 🤖', options: ['A) Automated Inquiry', 'B) Artificial Intelligence', 'C) Analog Interface', 'D) Autonomous Innovation'], answerIndex: 1, points: 1 },
   { id: 'ai-002', question: 'What is machine learning? 📚', options: ['A) A way for computers to learn from data and improve over time', 'B) Programming computers by giving fixed rules', 'C) Writing code with machines', 'D) Using robots to teach classes'], answerIndex: 0, points: 1 },
