@@ -1,20 +1,34 @@
-function pickWeeklyQuestionSet(config, state) {
-  const usedByCategory =
-    config.quiz?.usedQuestionIdsByCategory ?? state.usedQuestionIdsByCategory ?? {};
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
+} from 'discord.js';
+import {
+  getCategories,
+  getCategoryRemainingCount,
+  getLowStockCategories,
+  pickQuestionFromCategory,
+} from '../data/quizQuestions.js';
+import { getGuildConfig, setGuildConfig } from './guildConfig.js';
+import { logger } from '../utils/logger.js';
 
-  const picked = pickWeeklyMixedQuiz({ usedByCategory });
-
-  for (const question of picked) {
-    markQuestionUsed(config, state, question.category, question.id);
-  }
-
-  return picked;
-}
-
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 const LOW_STOCK_THRESHOLD = 10;
 const activeQuizSessions = new Map();
 const runtimeQuizState = new Map();
+const lastQuizRunByGuild = new Map();
+
+function getLocalDayKey(date = new Date()) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+
+function shouldRunSundayQuiz(date = new Date()) {
+  return date.getDay() === 0 && date.getHours() === 18 && date.getMinutes() < 5;
+}
 
 function getRuntimeState(guildId) {
   if (!runtimeQuizState.has(guildId)) {
@@ -146,7 +160,7 @@ async function sendLowStockReminder(guild, config, state) {
     )
     .addFields({
       name: '🧩 Reminder',
-      value: `Please reload the category banks when they reach low stock.`,
+      value: 'Please reload the category banks when they reach low stock.',
     })
     .setTimestamp()
     .setFooter({ text: `${guild.name} • Quiz Stock` });
@@ -279,6 +293,8 @@ export async function startWeeklyQuiz(guild, channel) {
     return false;
   }
 
+  await persistQuizState(guild.client, guild.id, config);
+
   activeQuizSessions.set(guild.id, {
     id: `${guild.id}:${Date.now()}`,
     guildId: guild.id,
@@ -289,7 +305,6 @@ export async function startWeeklyQuiz(guild, channel) {
   });
 
   try {
-
     await channel.send({
       embeds: [
         new EmbedBuilder()
@@ -313,10 +328,18 @@ export async function startWeeklyQuiz(guild, channel) {
     }
 
     const rows = buildLeaderboard(session);
+    const winner = rows[0];
     const leaderboardText =
       rows.length > 0
-        ? rows.slice(0, 10).map((row, index) => `**${index + 1}.** <@${row.userId}> — **${row.score}** pts`).join('\n')
+        ? rows
+            .slice(0, 10)
+            .map((row, index) => `**${index + 1}.** <@${row.userId}> — **${row.score}** pts`)
+            .join('\n')
         : 'No one scored this week.';
+
+    const winnerText = winner
+      ? `🥇 Winner: <@${winner.userId}> with **${winner.score}** points!`
+      : 'No winner this week.';
 
     const leaderboardChannelId =
       config.quiz.leaderboardChannelId ||
@@ -332,8 +355,8 @@ export async function startWeeklyQuiz(guild, channel) {
         embeds: [
           new EmbedBuilder()
             .setColor('#57F287')
-            .setTitle('🏆 Weekly Quiz Leaderboard')
-            .setDescription(leaderboardText)
+            .setTitle('🏆 Weekly Quiz Results')
+            .setDescription(`${winnerText}\n\n${leaderboardText}`)
             .setTimestamp(),
         ],
       }).catch(() => {});
@@ -358,6 +381,10 @@ export async function runQuizScheduler(client) {
 
       if (!config.quiz.enabled || !config.quiz.channelId) continue;
       if (activeQuizSessions.has(guild.id)) continue;
+      if (!shouldRunSundayQuiz()) continue;
+
+      const runKey = getLocalDayKey();
+      if (lastQuizRunByGuild.get(guild.id) === runKey) continue;
 
       const channel =
         guild.channels.cache.get(config.quiz.channelId) ||
@@ -365,7 +392,11 @@ export async function runQuizScheduler(client) {
 
       if (!channel?.isTextBased?.()) continue;
 
-      await startWeeklyQuiz(guild, channel);
+      const started = await startWeeklyQuiz(guild, channel);
+      if (started) {
+        lastQuizRunByGuild.set(guild.id, runKey);
+      }
+
       await sendLowStockReminder(guild, config, state);
     } catch (error) {
       logger.error(`❌ Quiz scheduler error for guild ${guild.id}:`, error);
@@ -382,7 +413,6 @@ export async function getQuizStatus(client, guildId) {
     enabled: !!config.quiz.enabled,
     channelId: config.quiz.channelId,
     leaderboardChannelId: config.quiz.leaderboardChannelId,
-    nextRunAt: config.quiz.nextRunAt,
     questionCount: config.quiz.questionCount,
     answerWindowMs: config.quiz.answerWindowMs,
     categories: getCategories().map((category) => ({
