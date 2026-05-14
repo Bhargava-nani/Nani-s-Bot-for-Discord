@@ -1,4 +1,4 @@
-export const datingQuestions = [
+const rawdatingQuestions = [
   {
     id: 'dating-001',
     question: 'How do you usually start a first date conversation? 💬',
@@ -700,3 +700,8 @@ export const datingQuestions = [
     points: 1,
   },
 ];
+
+export const datingQuestions = rawdatingQuestions.map((q) => ({
+  ...q,
+  options: q.options.map((opt) => opt.replace(/^[A-D]\)\s*/, '')),
+}));
