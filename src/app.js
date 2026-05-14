@@ -1,4 +1,6 @@
-﻿import 'dotenv/config';
+import 'dotenv/config';
+process.env.TZ = process.env.TZ || 'Asia/Kolkata';
+
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
 import { REST } from '@discordjs/rest';
 import express from 'express';
@@ -6,7 +8,6 @@ import cron from 'node-cron';
 
 import config from './config/application.js';
 import { initializeDatabase } from './utils/database.js';
-import { getGuildConfig } from './services/guildConfig.js';
 import { getServerCounters, saveServerCounters, updateCounter } from './services/serverstatsService.js';
 import { logger, startupLog, shutdownLog } from './utils/logger.js';
 import { checkBirthdays } from './services/birthdayService.js';
@@ -18,19 +19,14 @@ class TitanBot extends Client {
   constructor() {
     super({
       intents: [
-        
-        GatewayIntentBits.Guilds,                        
-        GatewayIntentBits.GuildMembers,                 
-        
-        
-        GatewayIntentBits.GuildMessages,                
-        GatewayIntentBits.GuildMessageReactions,        
-        GatewayIntentBits.MessageContent,               
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildInvites,
-        GatewayIntentBits.GuildVoiceStates,             
-        
-        
-        GatewayIntentBits.GuildBans,                    
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildBans,
       ],
     });
 
@@ -48,13 +44,12 @@ class TitanBot extends Client {
   async start() {
     try {
       startupLog('Starting TitanBot...');
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       startupLog('Initializing database...');
       const dbInstance = await initializeDatabase();
       this.db = dbInstance.db;
-      
-      // Check database status and report
+
       const dbStatus = this.db.getStatus();
       if (dbStatus.isDegraded) {
         logger.warn('');
@@ -69,34 +64,34 @@ class TitanBot extends Client {
       } else {
         startupLog(`✅ Database Status: ${dbStatus.connectionType} (fully operational)`);
       }
-      
+
       startupLog('Starting web server...');
       this.startWebServer();
-      
+
       startupLog('Loading commands...');
       await loadCommands(this);
       startupLog(`Commands loaded: ${this.commands.size}`);
-      
+
       startupLog('Loading handlers...');
       await this.loadHandlers();
       startupLog('Handlers loaded');
-      
+
       startupLog('Logging into Discord...');
       await this.login(this.config.bot.token);
       startupLog('Discord login successful');
-      
+
       startupLog('Registering slash commands...');
       await this.registerCommands();
       startupLog('Slash commands registration complete');
-      
+
       const databaseMode = dbStatus.isDegraded
         ? 'Optional in-memory mode (data resets after restart)'
         : 'Connected (persistent data enabled)';
       const handlerSummary = `${this.buttons.size} buttons, ${this.selectMenus.size} menus, ${this.modals.size} modals`;
       startupLog(
-        `ONLINE ✅ | ${this.commands.size} commands loaded | ${handlerSummary} | Database: ${databaseMode}`
+        `ONLINE ✅ | ${this.commands.size} commands loaded | ${handlerSummary} | Database: ${databaseMode}`,
       );
-      
+
       this.setupCronJobs();
     } catch (error) {
       logger.error('Failed to start bot:', error);
@@ -110,17 +105,17 @@ class TitanBot extends Client {
     const maxPortRetryAttempts = Number(process.env.PORT_RETRY_ATTEMPTS || 5);
     const host = process.env.WEB_HOST || '0.0.0.0';
     const corsOrigin = this.config.api?.cors?.origin || '*';
-    
+
     app.use((req, res, next) => {
       const allowedOrigins = Array.isArray(corsOrigin) ? corsOrigin : [corsOrigin];
       const origin = req.headers.origin;
-      
+
       if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
         res.header('Access-Control-Allow-Origin', origin || '*');
       }
       res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
       res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      
+
       if (req.method === 'OPTIONS') {
         return res.sendStatus(200);
       }
@@ -128,24 +123,24 @@ class TitanBot extends Client {
     });
 
     const requestCounts = new Map();
-    const windowMs = 60000; 
+    const windowMs = 60000;
     const maxRequests = this.config.api?.rateLimit?.max || 100;
-    
+
     app.use((req, res, next) => {
       const ip = req.ip;
       const now = Date.now();
       const windowStart = now - windowMs;
-      
+
       if (!requestCounts.has(ip)) {
         requestCounts.set(ip, []);
       }
-      
-      const times = requestCounts.get(ip).filter(t => t > windowStart);
-      
+
+      const times = requestCounts.get(ip).filter((t) => t > windowStart);
+
       if (times.length >= maxRequests) {
         return res.status(429).json({ error: 'Too many requests' });
       }
-      
+
       times.push(now);
       requestCounts.set(ip, times);
       next();
@@ -160,8 +155,8 @@ class TitanBot extends Client {
         database: {
           connected: dbStatus.connectionType !== 'none',
           degraded: dbStatus.isDegraded,
-          type: dbStatus.connectionType
-        }
+          type: dbStatus.connectionType,
+        },
       };
       res.status(200).json(status);
     });
@@ -173,21 +168,21 @@ class TitanBot extends Client {
       if (isReady) {
         return res.status(200).json({
           ready: true,
-          message: 'Bot is ready'
+          message: 'Bot is ready',
         });
       }
 
       res.status(503).json({
         ready: false,
-        reason: !this.isReady() ? 'Bot not Ready' : 'Database degraded'
+        reason: !this.isReady() ? 'Bot not Ready' : 'Database degraded',
       });
     });
 
     app.get('/', (req, res) => {
-      res.status(200).json({ 
+      res.status(200).json({
         message: 'TitanBot System Online',
         version: '2.0.0',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     });
 
@@ -229,9 +224,16 @@ class TitanBot extends Client {
   }
 
   setupCronJobs() {
-    cron.schedule('0 6 * * *', () => checkBirthdays(this));
+    cron.schedule('0 6 * * *', () => checkBirthdays(this), {
+      timezone: 'Asia/Kolkata',
+    });
+
     cron.schedule('* * * * *', () => checkGiveaways(this));
-    cron.schedule('30 12 * * 0', () => runQuizScheduler(this));
+
+    cron.schedule('0 18 * * 0', () => runQuizScheduler(this), {
+      timezone: 'Asia/Kolkata',
+    });
+
     cron.schedule('*/15 * * * *', () => this.updateAllCounters());
   }
 
@@ -240,13 +242,13 @@ class TitanBot extends Client {
       logger.warn('Database not available for counter updates');
       return;
     }
-    
+
     for (const [guildId, guild] of this.guilds.cache) {
       try {
         const counters = await getServerCounters(this, guildId);
         const validCounters = [];
         const orphanedCounters = [];
-        
+
         for (const counter of counters) {
           if (counter && counter.type && counter.channelId && counter.enabled !== false) {
             const channel = guild.channels.cache.get(counter.channelId);
@@ -259,8 +261,7 @@ class TitanBot extends Client {
             }
           }
         }
-        
-        // Save cleaned counters if any were orphaned
+
         if (orphanedCounters.length > 0) {
           await saveServerCounters(this, guildId, validCounters);
           logger.info(`Cleaned up ${orphanedCounters.length} orphaned counter(s) from guild ${guildId} during scheduled update`);
@@ -274,16 +275,16 @@ class TitanBot extends Client {
   async loadHandlers() {
     const handlers = [
       { path: 'events', type: 'default', required: true },
-      { path: 'interactions', type: 'default', required: true }
+      { path: 'interactions', type: 'default', required: true },
     ];
 
     for (const handler of handlers) {
       try {
         const module = await import(`./handlers/${handler.path}.js`);
-        const loaderFn = handler.type.startsWith('named:') 
-          ? module[handler.type.split(':')[1]] 
+        const loaderFn = handler.type.startsWith('named:')
+          ? module[handler.type.split(':')[1]]
           : module.default;
-        
+
         if (typeof loaderFn === 'function') {
           await loaderFn(this);
           logger.info(`✅ Loaded ${handler.path}`);
@@ -316,12 +317,10 @@ class TitanBot extends Client {
     logger.info(`${'='.repeat(60)}`);
 
     try {
-      
       logger.info('Stopping cron jobs...');
-      cron.getTasks().forEach(task => task.stop());
+      cron.getTasks().forEach((task) => task.stop());
       logger.info('✅ Cron jobs stopped');
 
-      // Close database connection
       if (this.db && this.db.db) {
         logger.info('Closing database connection...');
         try {
@@ -334,21 +333,18 @@ class TitanBot extends Client {
         }
       }
 
-      
       logger.info('Destroying Discord client...');
       if (this.isReady()) {
         try {
           this.destroy();
           logger.info('✅ Discord client destroyed');
         } catch (error) {
-          
-          
           logger.warn('Discord client destroy warning (non-critical):', error.message);
         }
       }
 
       logger.info('✅ Graceful shutdown complete');
-  shutdownLog('Bot stopped successfully.');
+      shutdownLog('Bot stopped successfully.');
       process.exit(0);
     } catch (error) {
       logger.error('Error during graceful shutdown:', error);
@@ -359,22 +355,22 @@ class TitanBot extends Client {
 
 try {
   const bot = new TitanBot();
-  
+
   const setupShutdown = () => {
     process.on('SIGTERM', () => bot.shutdown('SIGTERM'));
     process.on('SIGINT', () => bot.shutdown('SIGINT'));
-    
+
     process.on('uncaughtException', (error) => {
       logger.error('Uncaught Exception:', error);
       bot.shutdown('UNCAUGHT_EXCEPTION');
     });
-    
+
     process.on('unhandledRejection', (reason, promise) => {
       logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
       bot.shutdown('UNHANDLED_REJECTION');
     });
   };
-  
+
   setupShutdown();
   bot.start();
 } catch (error) {
@@ -383,6 +379,3 @@ try {
 }
 
 export default TitanBot;
-
-
-
