@@ -31,7 +31,6 @@ function ensureQuizConfig(config) {
     enabled: false,
     channelId: null,
     leaderboardChannelId: null,
-    nextRunAt: null,
     questionCount: 10,
     answerWindowMs: 60000,
   };
@@ -290,8 +289,6 @@ export async function startWeeklyQuiz(guild, channel) {
   });
 
   try {
-    config.quiz.nextRunAt = Date.now() + WEEK_MS;
-    await persistQuizState(guild.client, guild.id, config);
 
     await channel.send({
       embeds: [
@@ -361,14 +358,6 @@ export async function runQuizScheduler(client) {
 
       if (!config.quiz.enabled || !config.quiz.channelId) continue;
       if (activeQuizSessions.has(guild.id)) continue;
-
-      if (config.quiz.nextRunAt == null) {
-        config.quiz.nextRunAt = Date.now() + WEEK_MS;
-        await persistQuizState(client, guild.id, config);
-        continue;
-      }
-
-      if (Date.now() < config.quiz.nextRunAt) continue;
 
       const channel =
         guild.channels.cache.get(config.quiz.channelId) ||
