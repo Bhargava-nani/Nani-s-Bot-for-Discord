@@ -44,8 +44,18 @@ const rawSportsGeoQuestions = [
   { id: 'sports-036', question: 'In which year did India win its first T20 Cricket World Cup? 🏆', options: ['2005 🏆', '2007 🏆', '2009 🏆', '2011 🏆'], answerIndex: 1, points: 1 },
   { id: 'sports-037', question: 'What is Usain Bolt\'s world record time for the 100m sprint? ⚡', options: ['9.63 seconds ⚡', '9.58 seconds ⚡', '9.69 seconds ⚡', '9.74 seconds ⚡'], answerIndex: 1, points: 1 },
   { id: 'sports-038', question: 'What is LeBron James\'s famous nickname? 🏀', options: ['The GOAT 🐐', 'The King 👑', 'Black Mamba 🐍', 'The Answer 💡'], answerIndex: 1, points: 1 },
-  { id: 'sports-039', question: 'Which country has won the most Rugby World Cup titles overall? 🏉', options: ['Australia 🦘', 'New Zealand 🥝', 'England 🏴󠁧󠁢󠁥󠁮󠁧󠁿', ' South Africa 🏉'], answerIndex: 3, points: 1 },
-  { id: 'sports-040', question: 'What is the "Golden Boot" awarded for at the FIFA World Cup? ⚽', options: ['Best goalkeeper 🧤', 'Top goal scorer ⚽', 'Best overall player 🏆', 'Best young player 🌟'], answerIndex: 1, points: 1 },
+{
+  id: 'sports-039',
+  question: 'Which country has won the most Rugby World Cup titles overall? 🏉',
+  options: [
+    'Australia 🦘',
+    'New Zealand 🥝',
+    'England 🏴',
+    'South Africa 🏉'
+  ],
+  answerIndex: 3,
+  points: 1
+},  { id: 'sports-040', question: 'What is the "Golden Boot" awarded for at the FIFA World Cup? ⚽', options: ['Best goalkeeper 🧤', 'Top goal scorer ⚽', 'Best overall player 🏆', 'Best young player 🌟'], answerIndex: 1, points: 1 },
   { id: 'sports-041', question: 'What surface is Wimbledon played on? 🎾', options: ['Clay 🟤', 'Hard court 🔵', 'Carpet 🟩', 'Grass 🎾'], answerIndex: 3, points: 1 },
   { id: 'sports-042', question: 'Which Grand Slam tennis tournament is played on clay? 🎾', options: ['Wimbledon 🎾', 'US Open 🗽', 'Australian Open 🦘', 'French Open 🎾'], answerIndex: 3, points: 1 },
   { id: 'sports-043', question: 'What does "IPL" stand for in cricket? 🏏', options: ['International Premier League 🌍', 'Indian Premier League 🏏', 'India Professional League 🇮🇳', 'International Professional League 🌐'], answerIndex: 1, points: 1 },
