@@ -1,4 +1,4 @@
-const rawCyberQuestions = [
+const rawhackingQuestions = [
 
   // 🛡️ Beginner Level (cyber-001 to cyber-050)
 
@@ -108,7 +108,7 @@ const rawCyberQuestions = [
 
 ];
 
-export const hacking = rawCyberQuestions.map((q) => ({
+export const hackingQuestions = rawhackingQuestions.map((q) => ({
   ...q,
   options: q.options.map((opt) => opt.replace(/^[A-D]\)\s*/, '')),
 }));
