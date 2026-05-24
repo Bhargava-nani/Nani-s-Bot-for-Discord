@@ -170,7 +170,9 @@ export default {
       return;
     }
 
-const nextRunText = `<t:${Math.floor(getNextSunday6PM().getTime() / 1000)}:F>`;
+    if (subcommand === 'status') {
+      const status = await getQuizStatus(client, guildId);
+      const nextRunText = `<t:${Math.floor(getNextSunday6PM().getTime() / 1000)}:F>`;
       const remainingText = status.categories
         .map((item) => `• **${item.category}** — **${item.remaining}** left`)
         .join('\n');
