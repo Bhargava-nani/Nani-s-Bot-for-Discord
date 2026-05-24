@@ -7,7 +7,6 @@ import {
 import { getGuildConfig, setGuildConfig } from '../../services/guildConfig.js';
 import { getQuizStatus, startWeeklyQuiz } from '../../services/quizService.js';
 
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 function getNextSunday6PM() {
   const now = new Date();
   const next = new Date(now);
@@ -26,7 +25,6 @@ export default {
   data: new SlashCommandBuilder()
     .setName('quiz')
     .setDescription('🧠 Weekly mixed quiz system')
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .setDMPermission(false)
     .addSubcommand((subcommand) =>
       subcommand
@@ -81,7 +79,6 @@ export default {
       enabled: false,
       channelId: null,
       leaderboardChannelId: null,
-      nextRunAt: null,
       questionCount: 10,
       answerWindowMs: 60000,
       usedQuestionIdsByCategory: {},
@@ -98,10 +95,7 @@ export default {
       }
 
       config.quiz.channelId = channel.id;
-      if (!config.quiz.nextRunAt) {
-        config.quiz.nextRunAt = Date.now() + 60_000;
-      }
-
+     
       await setGuildConfig(client, guildId, config);
 
       return interaction.reply({
@@ -133,13 +127,7 @@ export default {
       const enabled = interaction.options.getBoolean('enabled');
       config.quiz.enabled = enabled;
 
-      if (enabled && !config.quiz.nextRunAt) {
-        config.quiz.nextRunAt = Date.now() + WEEK_MS;
-      }
-
-      if (!enabled) {
-        config.quiz.nextRunAt = null;
-      }
+    
 
       await setGuildConfig(client, guildId, config);
 
