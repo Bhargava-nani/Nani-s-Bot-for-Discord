@@ -17,7 +17,20 @@ const LOW_STOCK_THRESHOLD = 10;
 const activeQuizSessions = new Map();
 const runtimeQuizState = new Map();
 const lastQuizRunByGuild = new Map();
+function getNextSunday6PM() {
+  const now = new Date();
+  const next = new Date(now);
 
+  const daysUntilSunday = (7 - now.getDay()) % 7;
+  next.setDate(now.getDate() + daysUntilSunday);
+  next.setHours(18, 0, 0, 0);
+
+  if (next <= now) {
+    next.setDate(next.getDate() + 7);
+  }
+
+  return next;
+}
 function getLocalDayKey(date = new Date()) {
   return [
     date.getFullYear(),
@@ -414,6 +427,7 @@ export async function getQuizStatus(client, guildId) {
     channelId: config.quiz.channelId,
     leaderboardChannelId: config.quiz.leaderboardChannelId,
     questionCount: config.quiz.questionCount,
+    nextRunAt: getNextSunday6PM().getTime(),
     answerWindowMs: config.quiz.answerWindowMs,
     categories: getCategories().map((category) => ({
       category,
