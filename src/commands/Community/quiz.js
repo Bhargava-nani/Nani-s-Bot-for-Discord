@@ -8,7 +8,20 @@ import { getGuildConfig, setGuildConfig } from '../../services/guildConfig.js';
 import { getQuizStatus, startWeeklyQuiz } from '../../services/quizService.js';
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+function getNextSunday6PM() {
+  const now = new Date();
+  const next = new Date(now);
 
+  const daysUntilSunday = (7 - now.getDay()) % 7;
+  next.setDate(now.getDate() + daysUntilSunday);
+  next.setHours(18, 0, 0, 0);
+
+  if (next <= now) {
+    next.setDate(next.getDate() + 7);
+  }
+
+  return next;
+}
 export default {
   data: new SlashCommandBuilder()
     .setName('quiz')
@@ -157,13 +170,7 @@ export default {
       return;
     }
 
-    if (subcommand === 'status') {
-      const status = await getQuizStatus(client, guildId);
-
-      const nextRunText = status.nextRunAt
-        ? `<t:${Math.floor(status.nextRunAt / 1000)}:F>`
-        : 'Not scheduled';
-
+const nextRunText = `<t:${Math.floor(getNextSunday6PM().getTime() / 1000)}:F>`;
       const remainingText = status.categories
         .map((item) => `• **${item.category}** — **${item.remaining}** left`)
         .join('\n');
