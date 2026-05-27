@@ -249,7 +249,9 @@ export default {
             }
             return;
           }
-
+if (interaction.customId.startsWith('quiz:')) {
+  return;
+}
           const [customId, ...args] = interaction.customId.split(':');
           const button = client.buttons.get(customId);
 
