@@ -75,6 +75,18 @@ const QuizConfigSchema = z.object({
   usedQuestionIdsByCategory: z.record(z.array(z.string())).default({}),
 });
 
+const CommunityStreakConfigSchema = z.object({
+  enabled: z.boolean().default(false),
+  qotdChannelId: z.string().nullable().optional(),
+  thoughtsChannelId: z.string().nullable().optional(),
+  announcementChannelId: z.string().nullable().optional(),
+}).default({
+  enabled: false,
+  qotdChannelId: null,
+  thoughtsChannelId: null,
+  announcementChannelId: null,
+});
+
 export const GuildConfigSchema = z
   .object({
     prefix: z.string().optional(),
@@ -93,6 +105,7 @@ export const GuildConfigSchema = z
     logging: LoggingConfigSchema.optional(),
     ticketLogging: TicketLoggingSchema.optional(),
     enableLogging: z.boolean().optional(),
+    communityStreaks: CommunityStreakConfigSchema.optional(),
     quiz: QuizConfigSchema.optional(),
     verification: VerificationConfigSchema
   })
