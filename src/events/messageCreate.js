@@ -1,8 +1,3 @@
-
-
-
-
-
 import { Events } from 'discord.js';
 import { logger } from '../utils/logger.js';
 import { getLevelingConfig, getUserLevelData } from '../services/leveling.js';
@@ -20,17 +15,12 @@ export default {
       if (message.author.bot || !message.guild) return;
 
       await handleLeveling(message, client);
+      await handleCommunityStreak(message, client);
     } catch (error) {
       logger.error('Error in messageCreate event:', error);
     }
   }
 };
-
-
-
-
-
-
 
 
 async function handleLeveling(message, client) {
