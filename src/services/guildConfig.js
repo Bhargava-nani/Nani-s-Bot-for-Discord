@@ -47,6 +47,9 @@ quiz: {
   answerWindowMs: 60000,
   usedQuestionIdsByCategory: {},
 },
+    events: {
+  announcementChannelId: null,
+},
 };
 
 
