@@ -39,6 +39,7 @@ quiz: {
   nextRunAt: null,
   questionCount: 5,
   answerWindowMs: 60000,
+  usedQuestionIdsByCategory: {},
 },
 };
 
