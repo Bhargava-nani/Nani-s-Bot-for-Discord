@@ -72,6 +72,7 @@ const QuizConfigSchema = z.object({
   nextRunAt: z.number().nullable().optional(),
   questionCount: z.number().int().min(1).max(10).default(5),
   answerWindowMs: z.number().int().min(15000).default(60000),
+  usedQuestionIdsByCategory: z.record(z.array(z.string())).default({}),
 });
 
 export const GuildConfigSchema = z
