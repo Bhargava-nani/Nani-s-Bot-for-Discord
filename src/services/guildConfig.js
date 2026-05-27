@@ -32,6 +32,12 @@ const GUILD_CONFIG_DEFAULTS = {
   },
   enabledEvents: {},
 },
+    communityStreaks: {
+  enabled: false,
+  qotdChannelId: null,
+  thoughtsChannelId: null,
+  announcementChannelId: null,
+},
 quiz: {
   enabled: false,
   channelId: null,
