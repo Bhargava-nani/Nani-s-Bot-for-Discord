@@ -87,6 +87,12 @@ const CommunityStreakConfigSchema = z.object({
   announcementChannelId: null,
 });
 
+const AchievementsConfigSchema = z.object({
+  announcementChannelId: z.string().nullable().optional(),
+}).default({
+  announcementChannelId: null,
+});
+
 export const GuildConfigSchema = z
   .object({
     prefix: z.string().optional(),
@@ -106,6 +112,7 @@ export const GuildConfigSchema = z
     ticketLogging: TicketLoggingSchema.optional(),
     enableLogging: z.boolean().optional(),
     communityStreaks: CommunityStreakConfigSchema.optional(),
+    achievements: AchievementsConfigSchema.optional(),
     quiz: QuizConfigSchema.optional(),
     verification: VerificationConfigSchema
   })
