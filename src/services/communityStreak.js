@@ -20,30 +20,11 @@ async function getStreakData(client, guildId) {
 async function saveStreakData(guildId, data) {
   await setInDb(getStreakDataKey(guildId), data);
 }
-if (message.channel.id === streakConfig.qotdChannelId) {
-  await awardBadgeWithAnnouncement(message, BADGES.QOTD_PARTICIPANT);
-}
 
-if (nextStreak === 3) {
-  await awardBadgeWithAnnouncement(message, BADGES.FIRST_STREAK);
-}
-
-if (nextStreak === 7) {
-  await awardBadgeWithAnnouncement(message, BADGES.THOUGHT_MASTER);
-}
-
-if (nextStreak === 30) {
-  await awardBadgeWithAnnouncement(message, BADGES.QOTD_WARRIOR);
-}
-
-if (nextStreak === 100) {
-  await awardBadgeWithAnnouncement(message, BADGES.STREAK_GOD);
-}
-
-function isRelevantChannel(config, channelId) {
+function isRelevantChannel(streakConfig, channelId) {
   return (
-    channelId === config?.communityStreaks?.qotdChannelId ||
-    channelId === config?.communityStreaks?.thoughtsChannelId
+    channelId === streakConfig?.qotdChannelId ||
+    channelId === streakConfig?.thoughtsChannelId
   );
 }
 
@@ -89,8 +70,30 @@ export async function handleCommunityStreak(message, client) {
 
     await saveStreakData(guildId, streakData);
 
+    if (message.channel.id === streakConfig.qotdChannelId) {
+      await awardBadgeWithAnnouncement(message, BADGES.QOTD_PARTICIPANT);
+    }
+
+    if (nextStreak === 3) {
+      await awardBadgeWithAnnouncement(message, BADGES.FIRST_STREAK);
+    }
+
+    if (nextStreak === 7) {
+      await awardBadgeWithAnnouncement(message, BADGES.THOUGHT_MASTER);
+    }
+
+    if (nextStreak === 30) {
+      await awardBadgeWithAnnouncement(message, BADGES.QOTD_WARRIOR);
+    }
+
+    if (nextStreak === 100) {
+      await awardBadgeWithAnnouncement(message, BADGES.STREAK_GOD);
+    }
+
     const announceChannelId =
       streakConfig.announcementChannelId ||
+      config.achievements?.announcementChannelId ||
+      config.events?.announcementChannelId ||
       streakConfig.qotdChannelId ||
       streakConfig.thoughtsChannelId;
 
