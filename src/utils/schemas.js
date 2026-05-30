@@ -89,10 +89,11 @@ const CommunityStreakConfigSchema = z.object({
 
 const AchievementsConfigSchema = z.object({
   announcementChannelId: z.string().nullable().optional(),
+  membersRoleId: z.string().nullable().optional(),
 }).default({
   announcementChannelId: null,
+  membersRoleId: null,
 });
-
 export const GuildConfigSchema = z
   .object({
     prefix: z.string().optional(),
