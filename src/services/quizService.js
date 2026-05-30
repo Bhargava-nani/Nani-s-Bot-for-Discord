@@ -12,6 +12,8 @@ import {
 } from '../data/quizQuestions.js';
 import { getGuildConfig, setGuildConfig } from './guildConfig.js';
 import { logger } from '../utils/logger.js';
+import { BADGES } from '../badges/badgeDefinitions.js';
+import { awardBadgeWithAnnouncement } from '../badges/badgeAwarder.js';
 
 const LOW_STOCK_THRESHOLD = 10;
 const activeQuizSessions = new Map();
@@ -353,6 +355,19 @@ export async function startWeeklyQuiz(guild, channel) {
     const winnerText = winner
       ? `🥇 Winner: <@${winner.userId}> with **${winner.score}** points!`
       : 'No winner this week.';
+        if (winner) {
+      const winnerMember = await guild.members.fetch(winner.userId).catch(() => null);
+      if (winnerMember) {
+        await awardBadgeWithAnnouncement(
+          {
+            client: guild.client,
+            guild,
+            author: winnerMember.user,
+          },
+          BADGES.QUIZ_CHAMPION,
+        );
+      }
+    }
 
     const leaderboardChannelId =
       config.quiz.leaderboardChannelId ||
