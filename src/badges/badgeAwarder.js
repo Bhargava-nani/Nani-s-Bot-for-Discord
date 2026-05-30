@@ -21,6 +21,7 @@ function getRarityColor(rarity) {
 
 async function announceBadge(message, badge) {
   const config = await getGuildConfig(message.client, message.guild.id);
+
   const channelId =
     config.achievements?.announcementChannelId ||
     config.events?.announcementChannelId ||
@@ -36,19 +37,40 @@ async function announceBadge(message, badge) {
 
   if (!channel?.isTextBased?.()) return;
 
+  const membersRoleId = config.achievements?.membersRoleId || null;
+
+  const contentPings = [
+    membersRoleId ? `<@&${membersRoleId}>` : null,
+    `<@${message.author.id}>`,
+    badge.roleId ? `<@&${badge.roleId}>` : null,
+  ].filter(Boolean);
+
   const embed = new EmbedBuilder()
     .setColor(getRarityColor(badge.rarity))
-    .setTitle(`${badge.emoji} New Badge Earned`)
+    .setTitle('🏆 Achievement Unlocked')
+    .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
     .setDescription(
-      `${message.author} unlocked **${badge.name}**\n${badge.description}`,
+      [
+        `🎉 **Receiver:** ${message.author}`,
+        badge.roleId ? `🎭 **Role Received:** <@&${badge.roleId}>` : '🎭 **Role Received:** None',
+        `📜 **Received For:** ${badge.name}`,
+        `📝 ${badge.description}`,
+      ].join('\n'),
     )
     .addFields(
-      { name: 'Rarity', value: badge.rarity, inline: true },
-      { name: 'Badge ID', value: badge.id, inline: true },
+      { name: '💎 Rarity', value: badge.rarity, inline: true },
+      { name: '🆔 Badge ID', value: badge.id, inline: true },
     )
-    .setTimestamp();
+    .setTimestamp()
+    .setFooter({ text: 'Keep grinding for more achievements!' });
 
-  await channel.send({ embeds: [embed] }).catch(() => {});
+  await channel.send({
+    content: contentPings.join(' '),
+    embeds: [embed],
+    allowedMentions: {
+      parse: ['users', 'roles'],
+    },
+  }).catch(() => {});
 }
 
 export async function getUserBadges(guildId, userId) {
