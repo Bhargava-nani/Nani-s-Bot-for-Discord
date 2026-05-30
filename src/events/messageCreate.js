@@ -16,16 +16,7 @@ export default {
       if (message.author.bot || !message.guild) return;
 
       await handleLeveling(message, client);
-      await checkBadges({
-  message,
-  client,
-  stats: {
-    messageCount: 1,
-    thoughtStreak: 7,
-    qotdStreak: 3,
-    voiceHours: 0,
-  },
-});
+    
       await handleCommunityStreak(message, client);
     } catch (error) {
       logger.error('Error in messageCreate event:', error);
