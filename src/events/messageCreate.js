@@ -18,11 +18,6 @@ export default {
       await handleLeveling(message, client);
     
       await handleCommunityStreak(message, client);
-    } catch (error) {
-      logger.error('Error in messageCreate event:', error);
-    }
-  }
-};
 
 
 async function handleLeveling(message, client) {
