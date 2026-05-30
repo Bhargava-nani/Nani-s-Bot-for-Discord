@@ -5,7 +5,7 @@ export const BADGES = {
     emoji: '🌱',
     rarity: 'COMMON',
     description: 'Sent the very first message and stepped into the journey.',
-    roleId: 1509176321069154385,
+    roleId: '1509176321069154385',
   },
 
   FIRST_STREAK: {
@@ -14,7 +14,7 @@ export const BADGES = {
     emoji: '✨',
     rarity: 'COMMON',
     description: 'Kept a 3-day activity streak alive.',
-    roleId: 1509176765032038400,
+    roleId: '1509176765032038400',
   },
 
   ACTIVE_MEMBER: {
@@ -23,7 +23,7 @@ export const BADGES = {
     emoji: '⚡',
     rarity: 'COMMON',
     description: 'Stayed active and kept the chat moving.',
-    roleId: 1509176989821440132,
+    roleId: '1509176989821440132',
   },
 
   QOTD_PARTICIPANT: {
@@ -32,7 +32,7 @@ export const BADGES = {
     emoji: '💭',
     rarity: 'COMMON',
     description: 'Shared thoughts in the Question of the Day channel.',
-    roleId: 1509177098378547250,
+    roleId: '1509177098378547250',
   },
 
   EVENT_PARTICIPANT: {
@@ -41,7 +41,7 @@ export const BADGES = {
     emoji: '🎉',
     rarity: 'COMMON',
     description: 'Joined a server event and showed up for the community.',
-    roleId: 1509177364947402812,
+    roleId: '1509177364947402812',
   },
 
   THOUGHT_MASTER: {
@@ -50,7 +50,7 @@ export const BADGES = {
     emoji: '🧠',
     rarity: 'EPIC',
     description: 'Built a 7-day thoughts streak with consistency and depth.',
-    roleId: 1509177445213798502,
+    roleId: '1509177445213798502',
   },
 
   QOTD_WARRIOR: {
@@ -59,7 +59,7 @@ export const BADGES = {
     emoji: '🔥',
     rarity: 'RARE',
     description: 'Answered QOTD for 30 days and kept the momentum alive.',
-    roleId: 1509177801797013555,
+    roleId: '1509177801797013555',
   },
 
   QUIZ_CHAMPION: {
@@ -68,7 +68,7 @@ export const BADGES = {
     emoji: '🏆',
     rarity: 'RARE',
     description: 'Won a quiz event and proved sharp knowledge.',
-    roleId: 1509177880674959571,
+    roleId: '1509177880674959571',
   },
 
   COMMUNITY_HELPER: {
@@ -77,7 +77,7 @@ export const BADGES = {
     emoji: '🤝',
     rarity: 'RARE',
     description: 'Helped members and added value to the server.',
-    roleId: 1509178084602150985,
+    roleId: '1509178084602150985',
   },
 
   NIGHT_OWL: {
@@ -86,7 +86,7 @@ export const BADGES = {
     emoji: '🌙',
     rarity: 'EPIC',
     description: 'Stayed active in the late hours and kept the chat alive.',
-    roleId: 1509178486609154218,
+    roleId: '1509178486609154218',
   },
 
   MESSAGE_MACHINE: {
@@ -95,7 +95,7 @@ export const BADGES = {
     emoji: '💬',
     rarity: 'EPIC',
     description: 'Sent 1,000 messages and became a steady presence.',
-    roleId: 1509178670521126983,
+    roleId: '1509178670521126983',
   },
 
   EVENT_WINNER: {
@@ -104,7 +104,7 @@ export const BADGES = {
     emoji: '🥇',
     rarity: 'EPIC',
     description: 'Won a community event and earned the spotlight.',
-    roleId: 1509178886003626075,
+    roleId: '1509178886003626075',
   },
 
   VOICE_LEGEND: {
@@ -113,7 +113,7 @@ export const BADGES = {
     emoji: '🎤',
     rarity: 'LEGENDARY',
     description: 'Spent 50 hours in voice chat and became a true presence.',
-    roleId: 1509179062512386058,
+    roleId: '1509179062512386058',
   },
 
   SERVER_VETERAN: {
@@ -122,7 +122,7 @@ export const BADGES = {
     emoji: '👑',
     rarity: 'LEGENDARY',
     description: 'Stayed active for 100 days and became part of the core.',
-    roleId: 1509179353626575048,
+    roleId: '1509179353626575048',
   },
 
   STREAK_GOD: {
@@ -131,7 +131,7 @@ export const BADGES = {
     emoji: '💎',
     rarity: 'LEGENDARY',
     description: 'Kept an unstoppable long-term streak alive.',
-    roleId: 1509179646833459322,
+    roleId: '1509179646833459322',
   },
 
   QUIZ_LEGEND: {
@@ -140,7 +140,7 @@ export const BADGES = {
     emoji: '🧿',
     rarity: 'LEGENDARY',
     description: 'Dominated multiple quiz events and earned legendary status.',
-    roleId: 1509179761866575974,
+    roleId: '1509179761866575974',
   },
 
   KNOWLEDGE_KEEPER: {
@@ -149,7 +149,7 @@ export const BADGES = {
     emoji: '📚',
     rarity: 'EPIC',
     description: 'Shared useful ideas and helped keep the server informed.',
-    roleId: 1509180009896611871,
+    roleId: '1509180009896611871',
   },
 
   COSMIC_MIND: {
@@ -158,7 +158,7 @@ export const BADGES = {
     emoji: '🪐',
     rarity: 'LEGENDARY',
     description: 'Shared deep, thoughtful ideas with cosmic-level impact.',
-    roleId: 1509180086212104232,
+    roleId: '1509180086212104232',
   },
 
   DEBATE_TITAN: {
@@ -167,6 +167,6 @@ export const BADGES = {
     emoji: '⚔️',
     rarity: 'RARE',
     description: 'Stood strong in discussions with sharp logic and confidence.',
-    roleId: 1509180210384343110,
+    roleId: '1509180210384343110',
   },
 };
