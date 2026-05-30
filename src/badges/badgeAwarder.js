@@ -22,9 +22,9 @@ function getRarityColor(rarity) {
 async function announceBadge(message, badge) {
   const config = await getGuildConfig(message.client, message.guild.id);
   const channelId =
+    config.achievements?.announcementChannelId ||
     config.events?.announcementChannelId ||
     config.announcementChannelId ||
-    config.logging?.channels?.eventAnnouncement ||
     config.logging?.channels?.common ||
     config.logging?.channelId;
 
@@ -71,6 +71,14 @@ export async function awardBadge(guildId, userId, badgeId) {
 export async function awardBadgeWithAnnouncement(message, badge) {
   const added = await awardBadge(message.guild.id, message.author.id, badge.id);
   if (!added) return false;
+
+  const member = await message.guild.members
+    .fetch(message.author.id)
+    .catch(() => null);
+
+  if (member && badge.roleId) {
+    await member.roles.add(String(badge.roleId)).catch(() => {});
+  }
 
   await announceBadge(message, badge);
   return true;
