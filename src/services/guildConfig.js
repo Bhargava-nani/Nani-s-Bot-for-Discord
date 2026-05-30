@@ -50,8 +50,9 @@ quiz: {
     events: {
   announcementChannelId: null,
 },
-    achievements: {
+ achievements: {
   announcementChannelId: null,
+  membersRoleId: null,
 },
 };
 
