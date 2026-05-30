@@ -2,6 +2,8 @@ import { EmbedBuilder } from 'discord.js';
 import { getGuildConfig } from './guildConfig.js';
 import { getFromDb, setInDb } from '../utils/database.js';
 import { logger } from '../utils/logger.js';
+import { BADGES } from '../badges/badgeDefinitions.js';
+import { awardBadgeWithAnnouncement } from '../badges/badgeAwarder.js';
 
 function getDayKey(date = new Date()) {
   return date.toISOString().slice(0, 10);
@@ -17,6 +19,25 @@ async function getStreakData(client, guildId) {
 
 async function saveStreakData(guildId, data) {
   await setInDb(getStreakDataKey(guildId), data);
+}
+if (message.channel.id === streakConfig.qotdChannelId) {
+  await awardBadgeWithAnnouncement(message, BADGES.QOTD_PARTICIPANT);
+}
+
+if (nextStreak === 3) {
+  await awardBadgeWithAnnouncement(message, BADGES.FIRST_STREAK);
+}
+
+if (nextStreak === 7) {
+  await awardBadgeWithAnnouncement(message, BADGES.THOUGHT_MASTER);
+}
+
+if (nextStreak === 30) {
+  await awardBadgeWithAnnouncement(message, BADGES.QOTD_WARRIOR);
+}
+
+if (nextStreak === 100) {
+  await awardBadgeWithAnnouncement(message, BADGES.STREAK_GOD);
 }
 
 function isRelevantChannel(config, channelId) {
